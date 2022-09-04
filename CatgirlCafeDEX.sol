@@ -76,8 +76,8 @@ contract Pool {
             // in the current `addLiquidity` call
             uint ethReserve =  ethBalance - msg.value;
             // Ratio should always be maintained so that there are no major price impacts when adding liquidity
-            // Ration here is -> (ERC20Amount user can add/USDCReserve in the contract) = (Eth Sent by the user/Eth Reserve in the contract);
-            // So doing some maths, (ERC20Amount user can add) = (Eth Sent by the user * USDCReserve /Eth Reserve);
+            // Ration here is -> (ERC20Amount user can add/ERC20Reserve in the contract) = (Eth Sent by the user/Eth Reserve in the contract);
+            // So doing some maths, (ERC20Amount user can add) = (Eth Sent by the user * ERC20Reserve /Eth Reserve);
             uint ERC20Amount = (msg.value * TokenReserve)/(ethReserve);
             require(_amount >= ERC20Amount, "Amount of tokens sent is less than the minimum tokens required");
             // transfer only (ERC20Amount user can add) amount of ERC20 from users account
@@ -98,7 +98,7 @@ contract Pool {
     * @dev Returns the amount Eth/ERC20 Dev tokens that would be returned to the user
     * in the swap
     */
-    function removeLiquidityETHUSDC(uint _amount) public returns (uint , uint) {
+    function removeLiquidityETHERC20(uint _amount) public returns (uint , uint) {
         require(_amount > 0, "_amount should be greater than zero");
         uint ethReserve = address(this).balance;
         uint _totalSupply = LPTokens.totalSupply();
@@ -121,8 +121,8 @@ contract Pool {
         LPTokens.burn(msg.sender, _amount);
         // Transfer `ethAmount` of Eth from user's wallet to the contract
         payable(msg.sender).transfer(ethAmount);
-        // Transfer `USDCAmount` of ERC20 from the user's wallet to the contract 
-        ERC20(ERC20Address).transfer(msg.sender, USDCAmount);
+        // Transfer ERC20 from the user's wallet to the contract 
+        ERC20(ERC20Address).transfer(msg.sender, ERC20Amount);
         return (ethAmount, ERC20Amount);
     }
 
@@ -153,7 +153,7 @@ contract Pool {
     /** 
     * @dev Swaps Eth for ERC20
     */
-    function ethToUSDC(uint _minTokens) public payable {
+    function ethToERC20(uint _minTokens) public payable {
         uint256 tokenReserve = getReserve();
         // call the `getAmountOfTokens` to get the amount of ERC20
         // that would be returned to the user after the swap
@@ -176,7 +176,7 @@ contract Pool {
     /** do
     * @dev Swaps ERC20 Tokens for Eth
     */
-    function USDCToEth(uint _tokensSold, uint _minEth) public {
+    function ERC20ToEth(uint _tokensSold, uint _minEth) public {
         uint256 tokenReserve = getReserve();
         // call the `getAmountOfTokens` to get the amount of Eth
         // that would be returned to the user after the swap
