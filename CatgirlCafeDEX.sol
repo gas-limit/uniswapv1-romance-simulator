@@ -36,7 +36,7 @@ contract Pool {
     }
 
     /** 
-    * @dev Returns the amount of `Crypto Dev Tokens` held by the contract
+    * @dev Returns the amount of ERC20 held by the contract
     */
     function getReserve() public view returns (uint) {
         return ERC20(ERC20Address).balanceOf(address(this));
@@ -52,7 +52,7 @@ contract Pool {
         ERC20 Token = ERC20(ERC20Address);
         /* 
             If the reserve is empty, intake any user supplied value for 
-            `Ether` and `Crypto Dev` tokens because there is no ratio currently
+            `Ether` and ERC20 tokens because there is no ratio currently
         */
         if(TokenReserve == 0) {
             // Transfer the `ERC20` address from the user's account to the contract
@@ -68,7 +68,7 @@ contract Pool {
         } else {
             /* 
                 If the reserve is not empty, intake any user supplied value for 
-                `Ether` and determine according to the ratio how many `Crypto Dev` tokens
+                `Ether` and determine according to the ratio how many ERC20 tokens
                 need to be supplied to prevent any large price impacts because of the additional
                 liquidity
             */
@@ -76,11 +76,11 @@ contract Pool {
             // in the current `addLiquidity` call
             uint ethReserve =  ethBalance - msg.value;
             // Ratio should always be maintained so that there are no major price impacts when adding liquidity
-            // Ration here is -> (USDCAmount user can add/USDCReserve in the contract) = (Eth Sent by the user/Eth Reserve in the contract);
-            // So doing some maths, (USDCAmount user can add) = (Eth Sent by the user * USDCReserve /Eth Reserve);
+            // Ration here is -> (ERC20Amount user can add/USDCReserve in the contract) = (Eth Sent by the user/Eth Reserve in the contract);
+            // So doing some maths, (ERC20Amount user can add) = (Eth Sent by the user * USDCReserve /Eth Reserve);
             uint ERC20Amount = (msg.value * TokenReserve)/(ethReserve);
             require(_amount >= ERC20Amount, "Amount of tokens sent is less than the minimum tokens required");
-            // transfer only (USDCAmount user can add) amount of `Crypto Dev tokens` from users account
+            // transfer only (ERC20Amount user can add) amount of ERC20 from users account
             // to the contract
             Token.transferFrom(msg.sender, address(this), ERC20Amount);
             // The amount of LP tokens that would be sent to the user should be propotional to the liquidity of
@@ -95,7 +95,7 @@ contract Pool {
     }
 
     /** 
-    * @dev Returns the amount Eth/Crypto Dev tokens that would be returned to the user
+    * @dev Returns the amount Eth/ERC20 Dev tokens that would be returned to the user
     * in the swap
     */
     function removeLiquidityETHUSDC(uint _amount) public returns (uint , uint) {
@@ -109,21 +109,21 @@ contract Pool {
         // Then by some maths -> (Eth sent back to the user) 
         // = (current Eth reserve * amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
         uint ethAmount = (ethReserve * _amount)/ _totalSupply;
-        // The amount of Crypto Dev token that would be sent back to the user is based
+        // The amount of ERC20 that would be sent back to the user is based
         // on a ratio 
-        // Ratio is -> (Crypto Dev sent back to the user) / (current Crypto Dev token reserve)
+        // Ratio is -> (ERC20 sent back to the user) / (current ERC20 Dev token reserve)
         // = (amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
-        // Then by some maths -> (Crypto Dev sent back to the user) 
-        // = (current Crypto Dev token reserve * amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
-        uint USDCAmount = (getReserve() * _amount)/ _totalSupply;
+        // Then by some maths -> (ERC20 sent back to the user) 
+        // = (current ERC20 reserve * amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
+        uint ERC20Amount = (getReserve() * _amount)/ _totalSupply;
         // Burn the sent `LP` tokens from the user's wallet because they are already sent to 
         // remove liquidity
         LPTokens.burn(msg.sender, _amount);
         // Transfer `ethAmount` of Eth from user's wallet to the contract
         payable(msg.sender).transfer(ethAmount);
-        // Transfer `USDCAmount` of `Crypto Dev` tokens from the user's wallet to the contract 
+        // Transfer `USDCAmount` of ERC20 from the user's wallet to the contract 
         ERC20(ERC20Address).transfer(msg.sender, USDCAmount);
-        return (ethAmount, USDCAmount);
+        return (ethAmount, ERC20Amount);
     }
 
     /** 
@@ -151,11 +151,11 @@ contract Pool {
     }
 
     /** 
-    * @dev Swaps Eth for CryptoDev Tokens
+    * @dev Swaps Eth for ERC20
     */
     function ethToUSDC(uint _minTokens) public payable {
         uint256 tokenReserve = getReserve();
-        // call the `getAmountOfTokens` to get the amount of Crypto Dev tokens
+        // call the `getAmountOfTokens` to get the amount of ERC20
         // that would be returned to the user after the swap
         // Notice that the `inputReserve` we are sending is equal to  
         // `address(this).balance - msg.value` instead of just `address(this).balance`
@@ -168,13 +168,13 @@ contract Pool {
         );
 
         require(tokensBought >= _minTokens, "insufficient output amount");
-        // Transfer the `Crypto Dev` tokens to the user
+        // Transfer the ERC20 tokens to the user
         ERC20(ERC20Address).transfer(msg.sender, tokensBought);
     }
 
 
     /** do
-    * @dev Swaps CryptoDev Tokens for Eth
+    * @dev Swaps ERC20 Tokens for Eth
     */
     function USDCToEth(uint _tokensSold, uint _minEth) public {
         uint256 tokenReserve = getReserve();
@@ -186,7 +186,7 @@ contract Pool {
             address(this).balance
         );
         require(ethBought >= _minEth, "insufficient output amount");
-        // Transfer `Crypto Dev` tokens from the user's address to the contract
+        // Transfer ERC20 tokens from the user's address to the contract
         ERC20(ERC20Address).transferFrom(
             msg.sender,
             address(this),
