@@ -55,7 +55,7 @@ contract Pool {
             `Ether` and `Crypto Dev` tokens because there is no ratio currently
         */
         if(TokenReserve == 0) {
-            // Transfer the `USDC` address from the user's account to the contract
+            // Transfer the `ERC20` address from the user's account to the contract
             Token.transferFrom(msg.sender, address(this), _amount);
             // Take the current ethBalance and mint `ethBalance` amount of LP tokens to the user.
             // `liquidity` provided is equal to `ethBalance` because this is the first time user 
@@ -78,11 +78,11 @@ contract Pool {
             // Ratio should always be maintained so that there are no major price impacts when adding liquidity
             // Ration here is -> (USDCAmount user can add/USDCReserve in the contract) = (Eth Sent by the user/Eth Reserve in the contract);
             // So doing some maths, (USDCAmount user can add) = (Eth Sent by the user * USDCReserve /Eth Reserve);
-            uint USDCAmount = (msg.value * TokenReserve)/(ethReserve);
-            require(_amount >= USDCAmount, "Amount of tokens sent is less than the minimum tokens required");
+            uint ERC20Amount = (msg.value * TokenReserve)/(ethReserve);
+            require(_amount >= ERC20Amount, "Amount of tokens sent is less than the minimum tokens required");
             // transfer only (USDCAmount user can add) amount of `Crypto Dev tokens` from users account
             // to the contract
-            Token.transferFrom(msg.sender, address(this), USDCAmount);
+            Token.transferFrom(msg.sender, address(this), ERC20Amount);
             // The amount of LP tokens that would be sent to the user should be propotional to the liquidity of
             // ether added by the user
             // Ratio here to be maintained is -> 
