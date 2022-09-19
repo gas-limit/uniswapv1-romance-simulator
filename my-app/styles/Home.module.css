@@ -1,0 +1,568 @@
+.main {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-family: "Courier New", Courier, monospace;
+  color:white;
+}
+
+.footer {
+  display: flex;
+  padding: 2rem 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  display:flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.image {
+  width: 70%;
+  height: 50%;
+  margin-left: 20%;
+}
+
+.input {
+  color:white;;
+  width: 100px;
+  height: 35px;
+  padding: 1%;
+  margin: 2%;
+  box-shadow: 0 0 15px 4px rgba(139, 0, 70, 0.06);
+  background-color: #f06ca3;
+  border-radius: 10px;
+  border: 1px solid white;
+}
+
+.title {
+  font-size: 2rem;
+  margin: 2rem 0;
+}
+
+.description {
+  line-height: 1;
+  margin: 2%;
+  font-size: 1.2rem;
+  border:white 1px solid;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.button {
+  border-radius: 60px;
+  background-color: #f06ca3;
+  border: none;
+  color: #ffffff;
+  font-size: 15px;
+  padding: 5px;
+  width: 100px;
+  cursor: pointer;
+  margin: 5px;
+  text-align: center;
+ 
+}
+
+.inputDiv {
+  width: 200px;
+  height: 100%;
+  padding: 1%;
+  margin: 2%;
+  border: lightslategray;
+ 
+  border-radius: 10px;
+}
+.select {
+  border-radius: 4px;
+  font-size: 15px;
+  padding: 5px;
+  width: 100px;
+  cursor: pointer;
+  margin: 2%;
+  background-color: #f06ca3;
+  border: 1px solid white;
+}
+
+.button1 {
+  border-radius: 60px;
+  background-color: #f06ca3;
+  border: none;
+  color: #ffffff;
+  font-size: 15px;
+  padding: 10px;
+  width: 130px;
+  cursor: pointer;
+  margin: 2%;
+  text-align: center;
+  margin-left:29%;
+  border: 1px white solid;
+ 
+}
+
+.button1:hover{
+  background-color: rgba(255, 255, 255, 0.5);
+  color: rgba(238, 4, 121, 0.5);
+}
+
+/* START OF CATGIRL SHIT*/
+
+.screen {
+  
+  width: 960px;
+  height: 600px;
+  margin: 0 auto;
+  background-image: url("../public/bg.jpg");
+  
+}
+
+.welcomebg {
+  background-image: url("../public/welcomebg2.jpg");
+  background-size: cover;
+  height:600px;
+  
+}
+
+.enterCafeButton {
+  width: 300px;
+  height:100px;
+  margin: auto 0;
+  margin-top: 100px;
+  margin-left: 360px;
+  border-radius: 50px;
+  cursor:pointer;
+  color:white;
+  background-color: rgba(139, 0, 70, 0.5);
+  font-size: 25px;
+}
+
+.enterCafeButton:hover {
+  background-color: rgba(238, 4, 121, 0.5);
+}
+
+.logo {
+  background-image: url("../public/catgirlcafelogo.png");
+  height:300px;
+  width:672px;
+  background-size: cover;
+  position:relative;
+  margin-left: 15%;
+  animation-name: fadeInBottom;
+  animation-duration: 4s;
+  
+}
+
+.catgirl1{
+  background-image: url("../public/catgirl1.png");
+  background-size: cover;
+  animation-name: fadeInRight;
+  animation-duration: 2s;
+  margin-left: 200px;
+  height: 411px;
+  width: 350px;
+  position:relative;
+  z-index: 2;
+}
+
+.dialogueBox {
+  position:relative;
+  border: 3px solid pink;
+  border-radius:10px;
+  height: 180px;
+  width: 900px;
+  margin: 0 auto;
+  animation-name:fadeInBottom;
+  animation-duration:2s;
+  line-height: 110px;
+  padding-left: 30px;
+  font-size: 20px;
+  background-color: rgba(0,0,0,0.5);
+  z-index:2;
+}
+
+.dialogueName {
+  border: 2px solid pink;
+  border-radius: 10px;
+  height: 50px;
+  width: 200px;
+  position:relative;
+  bottom: 290px;
+  margin-top: 60px;
+  margin-left: 50px;
+  animation-name:fadeInBottom;
+  animation-duration:1s;
+  text-align: center;
+  line-height: 50px;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  
+}
+
+.dialogue {
+  animation-name: fadeInBottom;
+  animation-duration: 7s;
+
+}
+
+.type{
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 4s steps(100) 0.5s both;
+}
+
+.dialogueButton{
+  position:relative;
+  border-radius: 50px;
+  width:130px;
+  height:50px;
+  bottom:120px;
+  cursor:pointer;
+  color:white;
+  background-color: rgba(238, 4, 121, 0.5);
+  line-height: 10px;
+  top: -135px;
+  font-size: 16px;
+}
+
+.dialogueButton:hover{
+  background-color: rgba(255, 255, 255, 0.5);
+  color: rgba(238, 4, 121, 0.5);
+}
+
+.menu {
+  border: solid white 1px;
+  border-radius: 12px;
+  width:400px;
+  height: 550px;
+  font-size: 30px;
+  position: relative;
+  margin-top: -680px;
+  margin-left: 500px;
+  animation-name: fadeInBottom;
+  animation-duration: 1s;
+  text-align: center;
+  z-index:5;
+  color: black;
+  padding:20px;
+  box-shadow: 0 0 15px 4px rgb(0, 0, 0);
+  background-image: url("../public/menu.png");
+  background-size: cover;
+}
+
+
+
+.MenuItem{
+  border:none;
+  background:none;
+  color:black;
+  font-size: 30px;
+  padding: 30px;
+  font-family: Georgia, serif;
+}
+
+.MenuItem:hover{
+  color:pink;
+  cursor:pointer;
+}
+
+.modalbg {
+  width:960px;
+  height: 600px;
+  background-color:#f0716c;
+  z-index:0;
+  position:absolute;
+  animation: fadeIn 1s both;
+}
+
+.modalbg2 {
+  width:960px;
+  height: 600px;
+  background-color:#f0716c;
+  z-index:0;
+  position:absolute;
+  animation: fadeIn 2s both;
+  --s: 25vmin;
+  --p: calc(var(--s) / 2);
+  --c1: #f06ca3;
+  --c2: #f0716c;
+  --c3: white;
+  --bg: var(--c3);
+  --d: 20000ms;
+  --e: cubic-bezier(0.76, 0, 0.24, 1);
+  
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(45deg, var(--c1) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--c1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--c2) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--c2) 75%);
+  background-size: var(--s) var(--s);
+  background-position: 
+    calc(var(--p) *  1) calc(var(--p) *  0), 
+    calc(var(--p) * -1) calc(var(--p) *  1), 
+    calc(var(--p) *  1) calc(var(--p) * -1), 
+    calc(var(--p) * -1) calc(var(--p) *  0);
+  animation:
+  fadeIn 1s both, 
+    color var(--d) var(--e) infinite,
+    position var(--d) var(--e) infinite;
+}
+
+@keyframes color {
+  0%, 25% {
+    --bg: var(--c3);
+  }
+  26%, 50% {
+    --bg: var(--c1);
+  }
+  51%, 75% {
+    --bg: var(--c3);
+  }
+  76%, 100% {
+    --bg: var(--c2);
+  }
+}
+
+@keyframes position {
+  0% {
+    background-position: 
+      calc(var(--p) *  1) calc(var(--p) *  0), 
+      calc(var(--p) * -1) calc(var(--p) *  1), 
+      calc(var(--p) *  1) calc(var(--p) * -1), 
+      calc(var(--p) * -1) calc(var(--p) *  0);
+  }
+  25% {
+    background-position: 
+      calc(var(--p) *  1) calc(var(--p) *  4), 
+      calc(var(--p) * -1) calc(var(--p) *  5), 
+      calc(var(--p) *  1) calc(var(--p) *  3), 
+      calc(var(--p) * -1) calc(var(--p) *  4);
+  }
+  50% {
+    background-position: 
+      calc(var(--p) *  3) calc(var(--p) * 8), 
+      calc(var(--p) * -3) calc(var(--p) * 9), 
+      calc(var(--p) *  2) calc(var(--p) * 7), 
+      calc(var(--p) * -2) calc(var(--p) * 8);
+  }
+  75% {
+    background-position: 
+      calc(var(--p) *  3) calc(var(--p) * 12), 
+      calc(var(--p) * -3) calc(var(--p) * 13), 
+      calc(var(--p) *  2) calc(var(--p) * 11), 
+      calc(var(--p) * -2) calc(var(--p) * 12);
+  }
+  100% {    
+    background-position: 
+      calc(var(--p) *  5) calc(var(--p) * 16), 
+      calc(var(--p) * -5) calc(var(--p) * 17), 
+      calc(var(--p) *  5) calc(var(--p) * 15), 
+      calc(var(--p) * -5) calc(var(--p) * 16);
+  }
+}
+
+.modal {
+  
+  background-color: rgba(240,146,108,0.8);
+  border-radius: 12px;
+  width:350px;
+  height: 450px;
+  position: relative;
+  margin-top:-630px;
+  margin-left: 500px;
+  padding:20px;
+  box-shadow: 0 0 50px 10px rgb(255, 255, 255);
+  animation-duration: 1s;
+  animation: fadeIn 1s 2s both;
+  z-index:5;
+}
+
+.x {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  margin-left: 280px;
+  cursor:pointer;
+  background-image: url("../public/close.png");
+  background-size: cover;
+}
+
+.swapPic {
+  background-image: url("../public/swap.png");
+  width: 70px;
+  height: 50px;
+  margin: 5px;
+  padding: 5px;
+  background-size: cover;
+  display: inline-block;
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+}
+
+.circles{
+  position: absolute;
+  top: -16px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index:6;
+ 
+} 
+
+.circles li{
+  position: absolute;
+  display: block;
+  list-style: none;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 1);
+  animation: animate 7s linear infinite;
+  bottom: -150px;
+  clip-path: circle(50% at 50% 50%);
+}
+
+.circles li:nth-child(1){
+  left: 25%;
+  width: 80px;
+  height: 80px;
+  animation-delay: 0s;
+}
+
+
+.circles li:nth-child(2){
+  left: 10%;
+  width: 20px;
+  height: 20px;
+  animation-delay: 2s;
+  animation-duration: 12s;
+}
+
+.circles li:nth-child(3){
+  left: 70%;
+  width: 20px;
+  height: 20px;
+  animation-delay: 4s;
+}
+
+.circles li:nth-child(4){
+  left: 40%;
+  width: 60px;
+  height: 60px;
+  animation-delay: 0s;
+  animation-duration: 18s;
+}
+
+.circles li:nth-child(5){
+  left: 65%;
+  width: 20px;
+  height: 20px;
+  animation-delay: 0s;
+}
+
+.circles li:nth-child(6){
+  left: 75%;
+  width: 110px;
+  height: 110px;
+  animation-delay: 3s;
+}
+
+.circles li:nth-child(7){
+  left: 35%;
+  width: 150px;
+  height: 150px;
+  animation-delay: 7s;
+}
+
+.circles li:nth-child(8){
+  left: 50%;
+  width: 25px;
+  height: 25px;
+  animation-delay: 15s;
+  animation-duration: 45s;
+}
+
+.circles li:nth-child(9){
+  left: 20%;
+  width: 15px;
+  height: 15px;
+  clip-path: circle(50% at 50% 50%);
+  animation-delay: 2s;
+  animation-duration: 35s;
+}
+
+.circles li:nth-child(10){
+  left: 85%;
+  width: 150px;
+  height: 150px;
+  animation-delay: 0s;
+  animation-duration: 11s;
+}
+
+
+
+@keyframes animate {
+
+  0%{
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+      border-radius: 0;
+  }
+
+  100%{
+      transform: translateY(-1000px) rotate(720deg);
+      opacity: 0;
+      border-radius: 50%;
+  }
+
+}
+
+
+
+@keyframes fadeInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to { opacity: 1 }
+}
+
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeInRight {
+  0% {
+     opacity: 0;
+     transform: translateX(20px);
+  }
+  100% {
+     opacity: 1;
+     transform: translateX(0);
+  }
+} 
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@media (max-width: 1000px) {
+  .main {
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color:white;
+  }
+}
+
