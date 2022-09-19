@@ -1,4 +1,4 @@
-**This is a decentralized exchange that I forked from LearnWeb3DAO but modified it so I can create an unlimited amount of liquidity pools which can support ERC20/ETH & ERC20/ERC20 pairs.**
+**This is a decentralized exchange that I forked from LearnWeb3DAO but modified it so I can create an unlimited amount of liquidity pools which can support ERC20/ETH & ERC20/ERC20 pairs. And also I made it look like a dating simulator where you visit an anime catgirl cafe**
 let me know what you think!
 
 **2 Smart Contract files that make up exchange:**
