@@ -1,7 +1,8 @@
 **This is a decentralized exchange that I forked from LearnWeb3DAO but modified it so I can create an unlimited amount of liquidity pools & also can support ERC20/ERC20 pairs.**
 let me know what you think!
 
-**2 Smart Contract files that make up exchange**
+**2 Smart Contract files that make up exchange:**
+
 **Exchange.sol**
 1. User can add liquidity which deposits erc20 / ETH pair into the contract, which speaks to the main contract that mints LP Tokens
 2. User can remove liquidity, which gives them erc20 / ETH pair from the contract, which speaks to the main contract that burns LP tokens
