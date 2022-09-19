@@ -10,4 +10,4 @@ in exchange.sol, there's 2 contracts
 
 poolPairs.sol is a liquidity pool that accepts two ERC20's as a pool pair
 
-![](https://github.com/CatgirlCafeV2-Decentralized-Exchange/catgirlcafe.gif)
+![image](https://user-images.githubusercontent.com/100609687/190956541-b4914a7d-3d41-42ce-a77a-aefce28a74fb.png)
