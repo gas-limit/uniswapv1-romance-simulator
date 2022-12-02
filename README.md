@@ -9,5 +9,9 @@ let me know what you think!
 3. All swaps incur a 1% fee that goes to donations to a foundation.
 4. Users can supply and remove liquidity from the pool contracts.
 
+To do: 
+1. Add withdraw functions for foundation
+2. Test
+3. Optimize
 
 ![image](https://user-images.githubusercontent.com/100609687/190956541-b4914a7d-3d41-42ce-a77a-aefce28a74fb.png)
