@@ -6,11 +6,58 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract CatgirlDEX is ERC20 {
 
-    constructor() ERC20("Kibbles", "NEKO") {}
-    
+    constructor(address payable _foundation) ERC20("Kibbles", "NEKO") {
+        foundation = _foundation;
+    }
 
-    function createPool(address _ERC20Address) public {
-    Pool tokenPair = new Pool(_ERC20Address);
+    event getPoolAddress(address indexed _address);
+    address payable foundation;
+    address[] ERC20Pools;
+    address[] ETHERC20Pools;
+    mapping(address => bool) isPool;
+
+    
+    mapping(address => uint) foundationTokenBalances;
+    uint public foundationETHBalance;
+
+    function setFoundationETHBalance(uint _donation) external {
+        require(isPool[msg.sender]);
+        foundationETHBalance += _donation;
+    }
+
+    function setFoundationTokenBalances(address _token, uint _amount) external {
+        require(isPool[msg.sender]);
+        foundationTokenBalances[_token] = _amount;
+    }
+    
+    function createETHERC20Pool(address _ERC20Address) public {
+    ETHERC20Pool tokenPair = new ETHERC20Pool(_ERC20Address);
+    ETHERC20Pools.push(address(tokenPair));
+    isPool[address(tokenPair)] == true;
+    }
+
+    function createERC20PairPool(address _ERC20Address1, address _ERC20Address2) public {
+        ERC20Pool tokenPair = new ERC20Pool(_ERC20Address1, _ERC20Address2);
+        ERC20Pools.push(address(tokenPair));
+        isPool[address(tokenPair)] == true;
+    }
+
+    function getERC20Pools() public {
+        uint poolAmount = ERC20Pools.length;
+       
+        for(uint i; i < poolAmount; i++){
+            emit getPoolAddress(ERC20Pools[i]);
+        }
+        
+    }
+
+    function getETHERC20Pools() public {
+        uint poolAmount = ETHERC20Pools.length;
+
+        for(uint i; i < poolAmount; i++){
+            emit getPoolAddress(ETHERC20Pools[i]);
+        }
+
     }
 
     function mint(address to, uint256 amount) public {
@@ -24,116 +71,70 @@ contract CatgirlDEX is ERC20 {
 
 }
 
-contract Pool {
+contract ETHERC20Pool {
 
     CatgirlDEX LPTokens = CatgirlDEX(msg.sender);
 
     address public ERC20Address;
-        // Exchange is inheriting ERC20, because our exchange would keep track of ERC LP tokens
     constructor(address _ERC20) {
         require(_ERC20 != address(0), "Token address passed is a null address");
+     
         ERC20Address = _ERC20;
+
     }
 
-    /** 
-    * @dev Returns the amount of ERC20 held by the contract
-    */
     function getReserve() public view returns (uint) {
         return ERC20(ERC20Address).balanceOf(address(this));
     }
 
-    /**
-    * @dev Adds liquidity to the exchange.
-    */
+
     function addLiquidityETHTOKEN(uint _amount) public payable returns (uint) {
         uint liquidity;
         uint ethBalance = address(this).balance;
         uint TokenReserve = getReserve();
         ERC20 Token = ERC20(ERC20Address);
-        /* 
-            If the reserve is empty, intake any user supplied value for 
-            `Ether` and ERC20 tokens because there is no ratio currently
-        */
+
         if(TokenReserve == 0) {
-            // Transfer the `ERC20` address from the user's account to the contract
             Token.transferFrom(msg.sender, address(this), _amount);
-            // Take the current ethBalance and mint `ethBalance` amount of LP tokens to the user.
-            // `liquidity` provided is equal to `ethBalance` because this is the first time user 
-            // is adding `Eth` to the contract, so whatever `Eth` contract has is equal to the one supplied 
-            // by the user in the current `addLiquidity` call
-            // `liquidity` tokens that need to be minted to the user on `addLiquidity` call should always be proportional
-            // to the Eth specified by the user
+
             liquidity = ethBalance;
             LPTokens.mint(msg.sender, liquidity);
         } else {
-            /* 
-                If the reserve is not empty, intake any user supplied value for 
-                `Ether` and determine according to the ratio how many ERC20 tokens
-                need to be supplied to prevent any large price impacts because of the additional
-                liquidity
-            */
-            // EthReserve should be the current ethBalance subtracted by the value of ether sent by the user
-            // in the current `addLiquidity` call
             uint ethReserve =  ethBalance - msg.value;
-            // Ratio should always be maintained so that there are no major price impacts when adding liquidity
-            // Ration here is -> (ERC20Amount user can add/ERC20Reserve in the contract) = (Eth Sent by the user/Eth Reserve in the contract);
-            // So doing some maths, (ERC20Amount user can add) = (Eth Sent by the user * ERC20Reserve /Eth Reserve);
+
             uint ERC20Amount = (msg.value * TokenReserve)/(ethReserve);
             require(_amount >= ERC20Amount, "Amount of tokens sent is less than the minimum tokens required");
-            // transfer only (ERC20Amount user can add) amount of ERC20 from users account
-            // to the contract
+
             Token.transferFrom(msg.sender, address(this), ERC20Amount);
-            // The amount of LP tokens that would be sent to the user should be propotional to the liquidity of
-            // ether added by the user
-            // Ratio here to be maintained is -> 
-            // (lp tokens to be sent to the user (liquidity)/ totalSupply of LP tokens in contract) = (Eth sent by the user)/(Eth reserve in the contract)
-            // by some maths -> liquidity =  (totalSupply of LP tokens in contract * (Eth sent by the user))/(Eth reserve in the contract)
+
             liquidity = (LPTokens.totalSupply() * msg.value)/ ethReserve;
             LPTokens.mint(msg.sender, liquidity);
         }
          return liquidity;
     }
 
-    /** 
-    * @dev Returns the amount Eth/ERC20 Dev tokens that would be returned to the user
-    * in the swap
-    */
+
     function removeLiquidityETHERC20(uint _amount) public returns (uint , uint) {
         require(_amount > 0, "_amount should be greater than zero");
         uint ethReserve = address(this).balance;
         uint _totalSupply = LPTokens.totalSupply();
-        // The amount of Eth that would be sent back to the user is based
-        // on a ratio 
-        // Ratio is -> (Eth sent back to the user/ Current Eth reserve)  
-        // = (amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
-        // Then by some maths -> (Eth sent back to the user) 
-        // = (current Eth reserve * amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
+
         uint ethAmount = (ethReserve * _amount)/ _totalSupply;
-        // The amount of ERC20 that would be sent back to the user is based
-        // on a ratio 
-        // Ratio is -> (ERC20 sent back to the user) / (current ERC20 Dev token reserve)
-        // = (amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
-        // Then by some maths -> (ERC20 sent back to the user) 
-        // = (current ERC20 reserve * amount of LP tokens that user wants to withdraw) / (total supply of LP tokens)
+
         uint ERC20Amount = (getReserve() * _amount)/ _totalSupply;
-        // Burn the sent `LP` tokens from the user's wallet because they are already sent to 
-        // remove liquidity
+
         LPTokens.burn(msg.sender, _amount);
-        // Transfer `ethAmount` of Eth from user's wallet to the contract
+
         payable(msg.sender).transfer(ethAmount);
-        // Transfer ERC20 from the user's wallet to the contract 
+
         ERC20(ERC20Address).transfer(msg.sender, ERC20Amount);
         return (ethAmount, ERC20Amount);
     }
 
-    /** 
-    * @dev Returns the amount Eth/Crypto Dev tokens that would be returned to the user
-    * in the swap
-    */
     function getAmountOfTokens(
-        uint256 inputAmount,
-        uint256 inputReserve,
-        uint256 outputReserve
+        uint256 inputAmount, //coins to be swapped
+        uint256 inputReserve, //reserve of coins minus tokens to be swapped
+        uint256 outputReserve //reserve of other token
     ) public pure returns (uint256) {
         require(inputReserve > 0 && outputReserve > 0, "invalid reserves");
         // We are charging a fee of `1%`
@@ -150,49 +151,222 @@ contract Pool {
         return numerator / denominator;
     }
 
-    /** 
-    * @dev Swaps Eth for ERC20
-    */
+    //gets 1 percent
+    function getDonationAmount(
+        uint256 inputAmount,
+        uint256 inputReserve,
+        uint256 outputReserve
+    ) public pure returns (uint256) {
+        require(inputReserve > 0 && outputReserve > 0, "invalid reserves");
+        uint256 numerator = inputAmount * outputReserve;
+        uint256 denominator = (inputReserve * 100) + inputAmount;
+        return numerator / denominator;
+    }
+
+
+
     function ethToERC20(uint _minTokens) public payable {
         uint256 tokenReserve = getReserve();
-        // call the `getAmountOfTokens` to get the amount of ERC20
-        // that would be returned to the user after the swap
-        // Notice that the `inputReserve` we are sending is equal to  
-        // `address(this).balance - msg.value` instead of just `address(this).balance`
-        // because `address(this).balance` already contains the `msg.value` user has sent in the given call
-        // so we need to subtract it to get the actual input reserve
         uint256 tokensBought = getAmountOfTokens(
             msg.value,
             address(this).balance - msg.value,
             tokenReserve
         );
 
+
+        uint256 tokenDonation = getDonationAmount(
+            msg.value, address(this).balance - msg.value, tokenReserve
+        );
+
+
         require(tokensBought >= _minTokens, "insufficient output amount");
-        // Transfer the ERC20 tokens to the user
+
+        LPTokens.setFoundationETHBalance(tokenDonation);
         ERC20(ERC20Address).transfer(msg.sender, tokensBought);
     }
 
 
-    /** do
-    * @dev Swaps ERC20 Tokens for Eth
-    */
+
     function ERC20ToEth(uint _tokensSold, uint _minEth) public {
         uint256 tokenReserve = getReserve();
-        // call the `getAmountOfTokens` to get the amount of Eth
-        // that would be returned to the user after the swap
+
         uint256 ethBought = getAmountOfTokens(
             _tokensSold,
             tokenReserve,
             address(this).balance
         );
+
+        uint donationAmount = getAmountOfTokens(
+            _tokensSold,
+            tokenReserve,
+            address(this).balance
+        );
         require(ethBought >= _minEth, "insufficient output amount");
-        // Transfer ERC20 tokens from the user's address to the contract
+  
         ERC20(ERC20Address).transferFrom(
             msg.sender,
             address(this),
             _tokensSold
         );
-        // send the `ethBought` to the user from the contract
+
+        LPTokens.setFoundationTokenBalances(ERC20Address, donationAmount);
         payable(msg.sender).transfer(ethBought);
+    }
+}
+
+contract ERC20Pool {
+
+    CatgirlDEX LPTokens = CatgirlDEX(msg.sender);
+
+    address public ERC20Address1;
+    address public ERC20Address2;
+
+    constructor(address _ERC20, address _ERC202) {
+        require(_ERC20 != address(0), "Token address passed is a null address");
+        ERC20Address1 = _ERC20;
+        ERC20Address2 = _ERC202;
+    }
+
+
+    function getReserveERC20() public view returns (uint) {
+        return ERC20(ERC20Address1).balanceOf(address(this));
+    }
+
+    function getReserveERC202() public view returns (uint) {
+        return ERC20(ERC20Address2).balanceOf(address(this));
+    }
+
+
+    function addLiquidity(uint _amount, uint _amount2) public payable returns (uint) {
+        uint liquidity;
+  
+        uint Token1Reserve = getReserveERC20();
+        uint Token2Reserve = getReserveERC202();
+        ERC20 Token1 = ERC20(ERC20Address1);
+        ERC20 Token2 = ERC20(ERC20Address2);
+
+        if(Token1Reserve == 0) {
+         
+            Token1.transferFrom(msg.sender, address(this), _amount);
+            Token2.transferFrom(msg.sender, address(this), _amount2);
+
+            liquidity = Token2Reserve;
+            LPTokens.mint(msg.sender, liquidity);
+        } else {
+
+            uint _Token2Reserve =  Token2Reserve - _amount2;
+
+            uint ERC20Amount = (_amount2 * Token1Reserve)/(_Token2Reserve);
+            require(_amount >= ERC20Amount, "Amount of tokens sent is less than the minimum tokens required");
+
+            Token1.transferFrom(msg.sender, address(this), ERC20Amount);
+
+            liquidity = (LPTokens.totalSupply() * _amount2)/ _Token2Reserve;
+            LPTokens.mint(msg.sender, liquidity);
+        }
+         return liquidity;
+    }
+
+
+    function removeLiquidity(uint _amount) public returns (uint , uint) {
+        require(_amount > 0, "_amount should be greater than zero");
+        uint token2Reserve = getReserveERC202();
+        uint _totalSupply = LPTokens.totalSupply();
+
+        uint token2Amount = (token2Reserve * _amount)/ _totalSupply;
+
+        uint token1Amount = (getReserveERC20() * _amount)/ _totalSupply;
+
+
+        LPTokens.burn(msg.sender, _amount);
+ 
+        ERC20(ERC20Address2).transfer(msg.sender, token1Amount);
+
+        ERC20(ERC20Address1).transfer(msg.sender, token1Amount);
+        return (token2Amount, token1Amount);
+    }
+
+
+    function getAmountOfTokens(
+        uint256 inputAmount,
+        uint256 inputReserve,
+        uint256 outputReserve
+    ) public pure returns (uint256) {
+        require(inputReserve > 0 && outputReserve > 0, "invalid reserves");
+
+        uint256 inputAmountWithFee = inputAmount * 99;
+  
+        uint256 numerator = inputAmountWithFee * outputReserve;
+        uint256 denominator = (inputReserve * 100) + inputAmountWithFee;
+        return numerator / denominator;
+    }
+
+        //gets 1 percent
+    function getDonationAmount(
+        uint256 inputAmount,
+        uint256 inputReserve,
+        uint256 outputReserve
+    ) public pure returns (uint256) {
+        require(inputReserve > 0 && outputReserve > 0, "invalid reserves");
+        uint256 numerator = inputAmount * outputReserve;
+        uint256 denominator = (inputReserve * 100) + inputAmount;
+        return numerator / denominator;
+    }
+
+    function approveToken2ToToken1(uint _tokensSold) public {
+        ERC20 Token2 = ERC20(ERC20Address2);
+        Token2.approve(address(this), _tokensSold);
+    }
+
+    /** 
+    * @dev Swaps ERC202 for ERC20
+    */
+    function token2ToToken1(uint _tokensSold, uint _minToken2) public {
+
+
+        uint256 token1Reserve = getReserveERC20();
+
+        ERC20 Token2 = ERC20(ERC20Address2);
+        Token2.transferFrom(msg.sender, address(this), _minToken2);
+        uint256 tokensBought = getAmountOfTokens(
+            _minToken2,
+            token1Reserve - _minToken2,
+            token1Reserve
+        );
+
+        uint256 donationAmount = getDonationAmount(_minToken2, token1Reserve, token1Reserve);
+
+
+        require(tokensBought >= _tokensSold, "insufficient output amount");
+        LPTokens.setFoundationTokenBalances(ERC20Address1, donationAmount);
+        ERC20(ERC20Address1).transfer(msg.sender, tokensBought);
+    }
+
+
+
+    function Token1ToToken2(uint _tokensSold, uint _minToken2) public {
+        
+        uint256 tokenReserve = getReserveERC202();
+
+        uint256 erc202Bought = getAmountOfTokens(
+            _tokensSold,
+            tokenReserve,
+            getReserveERC202()
+        );
+
+        uint256 donationAmount = getDonationAmount(_tokensSold, tokenReserve, getReserveERC202());
+
+
+        require(erc202Bought >= _minToken2, "insufficient output amount");
+        
+        LPTokens.setFoundationTokenBalances(ERC20Address2, donationAmount);
+        
+        ERC20(ERC20Address1).transferFrom(
+            msg.sender,
+            address(this),
+            _tokensSold
+        );
+
+        ERC20(ERC20Address2).transfer(msg.sender, _minToken2);
     }
 }
